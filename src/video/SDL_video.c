@@ -726,7 +726,9 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 		video->offset_y = 0;
 		mode->offset = 0;
 		SDL_SetClipRect(mode, NULL);
+#if 0 /* HED displays keep the logo/splash loaded by Linux */
 		SDL_ClearSurface(mode);
+#endif
 
 		/* Now adjust the offsets to match the desired mode */
 		video->offset_x = (mode->w-width)/2;
