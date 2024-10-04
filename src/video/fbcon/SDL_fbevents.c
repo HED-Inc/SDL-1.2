@@ -155,6 +155,12 @@ int FB_InGraphicsMode(_THIS)
 int FB_EnterGraphicsMode(_THIS)
 {
 	struct termios keyboard_termios;
+	/*
+	* Used to skip unneeded blocking ioctl call
+	* (kept status gui from launching after Qt or CoDeSys applications)
+	*/
+	const char *sdl_nokeyboard;
+	sdl_nokeyboard = SDL_getenv("SDL_NOKEYBOARD");
 
 	/* Set medium-raw keyboard mode */
 	if ( (keyboard_fd >= 0) && !FB_InGraphicsMode(this) ) {
@@ -166,7 +172,7 @@ int FB_EnterGraphicsMode(_THIS)
 			if ( ioctl(keyboard_fd, VT_GETSTATE, &vtstate) == 0 ) {
 				saved_vt = vtstate.v_active;
 			}
-			if ( ioctl(keyboard_fd, VT_ACTIVATE, current_vt) == 0 ) {
+			if ( (ioctl(keyboard_fd, VT_ACTIVATE, current_vt) == 0) && ( ! sdl_nokeyboard ) ) {
 				ioctl(keyboard_fd, VT_WAITACTIVE, current_vt);
 			}
 		}
